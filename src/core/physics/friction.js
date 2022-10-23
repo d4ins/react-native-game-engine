@@ -12,20 +12,20 @@ export class Friction {
   }
 
   brake = object => {
-    const isZero = object.velocity.horizontal === 0;
+    const isZero = object.velocity.state.horizontal === 0;
 
     if (isZero) {
       return;
     }
 
-    const isPositive = object.velocity.horizontal > 0;
+    const isPositive = object.velocity.state.horizontal > 0;
 
     const result =
-      object.velocity.horizontal +
+      object.velocity.state.horizontal +
       (isPositive ? -this.breakConstant : this.breakConstant);
     const isResultOpposite =
       (isPositive && result < 0) || (!isPositive && result > 0);
 
-    object.velocity.horizontal = isResultOpposite ? 0 : result;
+    object.velocity.update({horizontal: isResultOpposite ? 0 : result});
   };
 }

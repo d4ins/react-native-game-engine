@@ -9,27 +9,18 @@ import {Gravity} from '../physics/gravity';
 import {Friction} from '../physics/friction';
 import {Mover} from '../physics/mover';
 
+import {PhysicalAttributes} from './builders/physical_attributes';
+import {EnvironmentAttributes} from './builders/environment_attributes';
+import {VelocityAttributes} from './builders/velocity_attributes';
+import {AnimationsAttributes} from './builders/animations_attributes';
+import {AdditionalPropsAttributes} from './builders/additional_props_attributes';
+
 export class Base extends Pointer {
-  physicalAttributes = {
-    width: 0,
-    height: 0,
-    top: 0,
-    left: 0,
-    weight: 0,
-    opacity: 0,
-    backgroundColor: 'transparent',
-  };
-
-  environmentAttributes = {
-    gravity: true,
-    colladable: false,
-    obstacle: false,
-  };
-
-  velocity = {
-    vertical: 0,
-    horizontal: 0,
-  };
+  physicalAttributes = new PhysicalAttributes();
+  environmentAttributes = new EnvironmentAttributes();
+  velocity = new VelocityAttributes();
+  animations = new AnimationsAttributes();
+  additionalProps = new AdditionalPropsAttributes();
 
   layout = {
     x: 0,
@@ -46,42 +37,19 @@ export class Base extends Pointer {
 
   setState = null;
 
-  animations = {
-    idle: null,
-    death: null,
-    moveLeft: null,
-    moveRight: null,
-  };
-
-  additionalProps = {};
-
   constructor(options) {
     super();
 
-    if (options.physicalAttributes) {
-      Object.assign(this.physicalAttributes, options.physicalAttributes);
-    }
-
-    if (options.environmentAttributes) {
-      Object.assign(this.environmentAttributes, options.environmentAttributes);
-    }
-
-    if (options.velocity) {
-      Object.assign(this.velocity, options.velocity);
-    }
-
-    if (options.animations) {
-      Object.assign(this.animations, options.animations);
-    }
-
-    if (options.additionalProps) {
-      Object.assign(this.additionalProps, options.additionalProps);
-    }
+    this.physicalAttributes.update(options.physicalAttributes);
+    this.environmentAttributes.update(options.environmentAttributes);
+    this.velocity.update(options.velocity);
+    this.animations.update(options.animations);
+    this.additionalProps.update(options.additionalProps);
   }
 
   set position(value) {
     Object.keys(value).forEach(key => {
-      this.physicalAttributes[key] = value[key];
+      this.physicalAttributes.update({[key]: value[key]});
     });
   }
 
@@ -106,7 +74,7 @@ export class Base extends Pointer {
   };
 
   init = () => {
-    this.physicalAttributes.opacity = 1;
+    this.physicalAttributes.update({opacity: 1});
   };
 
   update = () => {
@@ -120,16 +88,16 @@ export class Base extends Pointer {
     Mover.instance.move(this);
 
     this.ref.current.setNativeProps({
-      ...this.physicalAttributes,
+      ...this.physicalAttributes.state,
     });
 
-    if (this.velocity.horizontal === 0 && this.state !== 'idle') {
+    if (this.velocity.state.horizontal === 0 && this.state !== 'idle') {
       this.idle();
     }
   };
 
   addVelocity = (direction, amount) => {
-    this.velocity[direction] = amount;
+    this.velocity.update({[direction]: amount});
   };
 
   handleLayout = event => {
@@ -141,12 +109,12 @@ export class Base extends Pointer {
       return;
     }
 
-    this.setState(this.animations[this.state]);
+    this.setState(this.animations.state[this.state]);
   };
 
   UI = () => {
     this.ref = useRef();
-    const [state, setState] = useState(this.animations[this.state]);
+    const [state, setState] = useState(this.animations.state[this.state]);
 
     const Component = state ? AnimatedAsset : View;
 
@@ -156,13 +124,16 @@ export class Base extends Pointer {
       <Component
         ref={this.ref}
         onLayout={this.handleLayout}
+        idleAsset={this.animations.state.idle}
+        state={this.state}
         assets={state?.set}
+        loop={state?.loop}
         frameSpeed={state?.frameSpeed}
         style={{
           ...this.styles,
-          ...this.physicalAttributes,
+          ...this.physicalAttributes.state,
         }}
-        {...this.additionalProps}
+        {...this.additionalProps.state}
       />
     );
   };

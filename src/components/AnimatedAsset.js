@@ -1,31 +1,39 @@
-import React, {forwardRef, useEffect, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useRef} from 'react';
 import {Image} from 'react-native';
 
 export const AnimatedAsset = forwardRef((props, ref) => {
-  const timeout = useRef();
-  const [currentAnimation, setCurrentAnimation] = useState(props.assets[0]);
+  const intervalRef = useRef();
+  const imageRef = useRef(props.assets[0]);
 
   useEffect(() => {
-    timeout.current = setTimeout(() => {
-      const index = props.assets.indexOf(currentAnimation);
-      setCurrentAnimation(props.assets[index + 1] ?? props.assets[0]);
+    intervalRef.current = setInterval(() => {
+      const index = props.assets.indexOf(imageRef.current);
+      const shouldReset = index === -1;
+      const nextIndex = shouldReset ? 0 : index + 1;
+
+      if (nextIndex >= props.assets.length) {
+        ref.current.setNativeProps({
+          source: [Image.resolveAssetSource(props.idleAsset.set[0])],
+        });
+        return;
+      }
+
+      imageRef.current = props.assets[nextIndex];
+
+      ref.current.setNativeProps({
+        source: [Image.resolveAssetSource(imageRef.current)],
+      });
     }, props.frameSpeed ?? 1000);
 
     return () => {
-      clearTimeout(timeout.current);
+      clearInterval(intervalRef.current);
     };
-  }, [
-    currentAnimation,
-    setCurrentAnimation,
-    props.assets.length,
-    props.assets,
-    props.frameSpeed,
-  ]);
+  }, [props.assets, props.frameSpeed, ref]);
 
   return (
     <Image
       ref={ref}
-      source={currentAnimation}
+      source={imageRef.current}
       resizeMode="contain"
       resizeMethod="scale"
       {...props}

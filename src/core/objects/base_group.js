@@ -19,7 +19,8 @@ export class BaseGroup extends Pointer {
 
   get outOfBoundsItems() {
     return this.objects.filter(
-      object => object.physicalAttributes.top > Dimensions.get('window').height,
+      object =>
+        object.physicalAttributes.state.top > Dimensions.get('window').height,
     );
   }
 

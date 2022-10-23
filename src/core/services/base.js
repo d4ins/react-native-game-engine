@@ -8,4 +8,6 @@ export class Base extends Pointer {
   init = () => {};
 
   update = () => {};
+
+  destroy = () => {};
 }

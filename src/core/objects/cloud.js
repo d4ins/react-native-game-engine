@@ -11,10 +11,12 @@ export class Cloud extends Base {
         width: 181,
         height: 66,
       },
-      environmentAttributes: {gravity: true},
       velocity: {vertical: 2},
       animations: {
-        idle: {set: [cloud[MathHelper.randomize(0, cloud.length - 1)]]},
+        idle: {
+          set: [cloud[MathHelper.randomize(0, cloud.length - 1)]],
+          loop: false,
+        },
       },
     });
   }

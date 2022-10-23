@@ -159,10 +159,14 @@ export class CollisionDetector {
   };
 
   findColladableObjects = objects => {
-    return objects.filter(object => object.environmentAttributes.colladable);
+    return objects.filter(
+      object => object.environmentAttributes.state.colladable,
+    );
   };
 
   findObstacleObjects = objects => {
-    return objects.filter(object => object.environmentAttributes.obstacle);
+    return objects.filter(
+      object => object.environmentAttributes.state.obstacle,
+    );
   };
 }

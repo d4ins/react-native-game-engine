@@ -4,6 +4,8 @@ import {routes} from '../navigator/routes';
 import {CollisionDetector} from './physics/collision_detector';
 
 export class Lifecycle {
+  static frameTime = 1000 / 40;
+
   inited = false;
 
   interval = null;
@@ -18,12 +20,10 @@ export class Lifecycle {
 
   services = [];
 
-  frameTime = 1000 / 40;
-
   tikCounter = 0;
 
   animationConfig = {
-    duration: this.frameTime,
+    duration: this.constructor.frameTime,
     create: {
       type: LayoutAnimation.Types.linear,
       property: LayoutAnimation.Properties.opacity,
@@ -42,7 +42,7 @@ export class Lifecycle {
   }
 
   start() {
-    this.services.forEach(helper => helper.init(this));
+    this.services.forEach(service => service.init(this));
     this.objectsGroup.forEach(object => object.init(this));
     this.objects.forEach(object => object.init(this));
 
@@ -54,7 +54,7 @@ export class Lifecycle {
 
       LayoutAnimation.configureNext(this.animationConfig);
 
-      this.services.forEach(helper => helper.update(this));
+      this.services.forEach(service => service.update(this));
       this.objectsGroup.forEach(object => object.update(this));
       this.objects.forEach(object => object.update(this));
 
@@ -66,7 +66,7 @@ export class Lifecycle {
         this.gameOver();
         return;
       }
-    }, this.frameTime);
+    }, this.constructor.frameTime);
   }
 
   end() {

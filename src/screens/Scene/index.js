@@ -8,6 +8,7 @@ import {WorldBoundaries} from '../../core/objects/world_boundaries';
 import {FallingObstacles} from '../../core/objects/falling_obstacles';
 import {Clouds} from '../../core/objects/clouds';
 import {UserIO} from '../../core/user_io';
+import {Score} from '../../core/services/score';
 
 import {NavBar} from './NavBar';
 
@@ -21,6 +22,7 @@ export const Scene = props => {
   const fallingObstaclesRef = useRef(new FallingObstacles());
   const cloudsRef = useRef(new Clouds());
   const playerRef = useRef(new Player());
+  const scoreRef = useRef(new Score());
 
   useLayoutEffect(() => {
     const lifecycle = lifecycleRef.current;
@@ -28,6 +30,7 @@ export const Scene = props => {
     const worldBoundaries = worldBoundariesRef.current;
     const fallingObstacles = fallingObstaclesRef.current;
     const clouds = cloudsRef.current;
+    const score = scoreRef.current;
 
     UserIO.instance.player = player;
 
@@ -36,6 +39,8 @@ export const Scene = props => {
     lifecycle.addObjectGroup(clouds);
 
     lifecycle.addObject(player);
+
+    lifecycle.addService(score);
 
     lifecycle.start();
 
@@ -61,6 +66,7 @@ export const Scene = props => {
 
           <playerRef.current.UI />
 
+          <scoreRef.current.UI />
           <NavBar navigate={props.navigate} />
         </Pressable>
       </ImageBackground>

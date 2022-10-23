@@ -1,5 +1,7 @@
 import {Dimensions} from 'react-native';
 
+import {Lifecycle} from '../lifecycle';
+
 import {idle} from '../../assets/hero/idle';
 import {moveRight} from '../../assets/hero/move_right';
 import {moveLeft} from '../../assets/hero/move_left';
@@ -18,9 +20,17 @@ export class Player extends Base {
       },
       environmentAttributes: {gravity: true, colladable: true},
       animations: {
-        idle: {set: idle, frameSpeed: 500},
-        moveRight: {set: moveRight, frameSpeed: 50},
-        moveLeft: {set: moveLeft, frameSpeed: 50},
+        idle: {set: [idle[0]], frameSpeed: 500, loop: true},
+        moveRight: {
+          set: moveRight,
+          frameSpeed: Lifecycle.frameTime,
+          loop: false,
+        },
+        moveLeft: {
+          set: moveLeft,
+          frameSpeed: Lifecycle.frameTime,
+          loop: false,
+        },
       },
       additionalProps: {
         resizeMode: 'cover',

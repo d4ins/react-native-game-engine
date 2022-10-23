@@ -14,19 +14,19 @@ export class Gravity {
   }
 
   accelerate = object => {
-    if (!object.environmentAttributes.gravity) {
+    if (!object.environmentAttributes.state.gravity) {
       return;
     }
 
     const speed =
-      object.velocity.vertical +
-      object.physicalAttributes.weight * this.accelerationConstant;
+      object.velocity.state.vertical +
+      object.physicalAttributes.state.weight * this.accelerationConstant;
 
     if (speed > this.maxVelocityConstant) {
-      object.velocity.vertical = this.maxVelocityConstant;
+      object.velocity.state.vertical = this.maxVelocityConstant;
       return;
     }
 
-    object.velocity.vertical = speed;
+    object.velocity.update({vertical: speed});
   };
 }
