@@ -1,19 +1,36 @@
 import React, {useRef, useLayoutEffect} from 'react';
-import {Dimensions, ImageBackground, Pressable, StyleSheet} from 'react-native';
+import {
+  Button,
+  Dimensions,
+  ImageBackground,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+} from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
-import {Lifecycle} from '../../core/lifecycle';
-import {Player} from '../../core/objects/player';
-import {WorldBoundaries} from '../../core/objects/world_boundaries';
-import {FallingObstacles} from '../../core/objects/falling_obstacles';
-import {Clouds} from '../../core/objects/clouds';
-import {UserIO} from '../../core/user_io';
-import {Score} from '../../core/services/score';
+import {routes} from '../navigator/routes';
 
-import {NavBar} from './NavBar';
+import {Lifecycle} from '../core/lifecycle';
+import {Player} from '../core/objects/player';
+import {WorldBoundaries} from '../core/objects/world_boundaries';
+import {FallingObstacles} from '../core/objects/falling_obstacles';
+import {Clouds} from '../core/objects/clouds';
+import {UserIO} from '../core/user_io';
+import {Score} from '../core/services/score';
 
 export const styles = StyleSheet.create({
   container: Dimensions.get('window'),
+  navigationContainer: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    backgroundColor: 'black',
+    height: 90,
+    width: Dimensions.get('window').width,
+    alignContent: 'flex-end',
+    justifyContent: 'flex-end',
+  },
 });
 
 export const Scene = props => {
@@ -58,7 +75,7 @@ export const Scene = props => {
       onSwipeRight={UserIO.instance.onSwipeRight}>
       <ImageBackground
         style={styles.container}
-        source={require('../../assets/background.png')}>
+        source={require('../assets/background.png')}>
         <Pressable style={styles.container} onPress={UserIO.instance.onPress}>
           <worldBoundariesRef.current.UI />
           <cloudsRef.current.UI />
@@ -67,7 +84,15 @@ export const Scene = props => {
           <playerRef.current.UI />
 
           <scoreRef.current.UI />
-          <NavBar navigate={props.navigate} />
+
+          <SafeAreaView style={styles.navigationContainer}>
+            <Button
+              onPress={() => props.navigate(routes.menu)}
+              title="Stop"
+              color="white"
+              accessibilityLabel="Learn more about this purple button"
+            />
+          </SafeAreaView>
         </Pressable>
       </ImageBackground>
     </GestureRecognizer>
