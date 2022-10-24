@@ -69,7 +69,6 @@ export const Scene = props => {
   return (
     <GestureRecognizer
       style={styles.container}
-      onTap
       onSwipeUp={UserIO.instance.onSwipeUp}
       onSwipeLeft={UserIO.instance.onSwipeLeft}
       onSwipeRight={UserIO.instance.onSwipeRight}>
